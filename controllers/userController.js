@@ -24,7 +24,7 @@ exports.login = async (req, res, next) => {
       expiresIn: '7d',
     })
 
-    res.status(200).json(user, token)
+    res.status(200).json({user, token})
   } catch (err) {
     console.error('Could not find user credentials:', err.message)
     next(err)
@@ -48,11 +48,7 @@ exports.register = async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(password, 10)
     const user = await User.create({ userName, email, password: hashedPassword })
 
-    const token = jwt.sign({_id: user._id}, process.env.JWT_SECRET_KEY, {
-      expiresIn: '7d',
-    })
-
-    res.status(200).json(user, token)
+    res.status(200).json(user)
   } catch (err) {
     console.error('Register error:', err.message)
     next(err)
@@ -73,17 +69,3 @@ exports.getUser = async (req, res, next) => {
     next(err)
   }
 }
-
-// GET /users/saved-articles
-exports.getArticles = async (req, res, next) => {
-  try {
-  } catch (err) {}
-}
-
-// PUT /users/saved-articles
-exports.saveArticles = async (req, res, next) => {
-  try {
-  } catch (err) {}
-}
-
-// DELETE /users/saved-articles
