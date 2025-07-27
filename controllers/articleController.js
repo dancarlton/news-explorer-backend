@@ -1,7 +1,7 @@
 const BadRequestError = require('../errors/BadRequestError')
 const NotFoundError = require('../errors/NotFoundError')
 const Article = require('../models/Articles')
-const User = require( '../models/Users' )
+const User = require('../models/Users')
 
 const toDate = new Date().toISOString().slice(0, 10)
 const fromDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
@@ -30,11 +30,10 @@ exports.getArticles = async (req, res, next) => {
   }
 }
 
-// GET /articles
-// get saved articles
+// POST /articles
+// save articles
 exports.saveArticle = async (req, res, next) => {
   try {
-    console.log('req.user:', req.user)
     const userId = req.user._id
 
     if (!userId) {
@@ -47,7 +46,7 @@ exports.saveArticle = async (req, res, next) => {
     })
 
     await User.findByIdAndUpdate(userId, {
-        $push: {savedArticles: savedArticle._id}
+      $push: { savedArticles: savedArticle._id },
     })
 
     res.status(201).json(savedArticle)
@@ -57,8 +56,24 @@ exports.saveArticle = async (req, res, next) => {
   }
 }
 
-// POST /articles
-// save an article
+// GET /articles
+// get saved articles
+exports.getSavedArticles = async (req, res, next) => {
+  try {
+    const userId = req.user._id
+
+    const savedArticle = await Article.find({ owner: userId })
+
+    if (!savedArticle) {
+      throw new NotFoundError('No saved articles found')
+    }
+
+    res.status(200).json(savedArticle)
+  } catch (err) {
+    console.log('Error getting saved article')
+    next(err)
+  }
+}
 
 // DELETE /articles/:id
 // removes an article from their favorites
