@@ -77,3 +77,24 @@ exports.getSavedArticles = async (req, res, next) => {
 
 // DELETE /articles/:id
 // removes an article from their favorites
+exports.deleteArticle = async (req, res, next) => {
+  try {
+    const articleId = req.params.articleId
+
+    // const deletedArticle = await Article.findOneAndDelete({ _id: articleId })
+    const deletedArticle = await User.findByIdAndUpdate(
+      req.user._id,
+      { $pull: { savedArticles: articleId } },
+      { new: true }
+    )
+
+    if (!deletedArticle) {
+      throw new NotFoundError('No article found')
+    }
+
+    res.status(200).json({ message: 'Article deleted', _id: articleId })
+  } catch (err) {
+    console.log('Error getting saved article')
+    next(err)
+  }
+}
