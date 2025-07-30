@@ -35,6 +35,7 @@ exports.getArticles = async (req, res, next) => {
 exports.saveArticle = async (req, res, next) => {
   try {
     const userId = req.user._id
+    const keyword = req.body.keyword
 
     if (!userId) {
       throw new NotFoundError('User ID not found')
@@ -42,6 +43,7 @@ exports.saveArticle = async (req, res, next) => {
 
     const savedArticle = await Article.create({
       ...req.body,
+      keyword: keyword,
       owner: userId,
     })
 

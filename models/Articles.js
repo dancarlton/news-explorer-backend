@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 
 const articleSchema = new mongoose.Schema({
+  keyword: { type: String, required: true },
   source: {
     id: { type: String },
     name: { type: String, required: true },
